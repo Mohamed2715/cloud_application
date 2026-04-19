@@ -1,6 +1,6 @@
 import math
 from collections import Counter
-from config.settings import (
+from settings import (
     SLOW_SPEED_THRESHOLD,
     MIN_VEHICLES_FOR_CONGESTION,
     MIN_SLOW_VEHICLES_FOR_CONGESTION,
