@@ -1,6 +1,8 @@
 import tempfile
 import cv2
 import streamlit as st
+import imageio
+import os
 
 from detector import Detector
 from tracker import SimpleTracker
@@ -35,20 +37,15 @@ if uploaded_file is not None:
     tfile.write(uploaded_file.read())
     video_path = tfile.name
 
-    cap = cv2.VideoCapture(video_path)
-
     stframe = st.empty()
     info_box = st.empty()
     progress_bar = st.progress(0)
 
-    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    reader = imageio.get_reader(video_path, 'ffmpeg')
+    total_frames = reader.count_frames()
     frame_index = 0
 
-    while cap.isOpened():
-        ret, frame = cap.read()
-        if not ret:
-            break
-
+    for frame in reader:
         roi_box = get_roi_box(
             frame.shape,
             ROI_TOP_RATIO,
@@ -82,7 +79,7 @@ if uploaded_file is not None:
         if total_frames > 0:
             progress_bar.progress(min(frame_index / total_frames, 1.0))
 
-    cap.release()
+    reader.close()
 
     summary = analyzer.final_summary()
 
