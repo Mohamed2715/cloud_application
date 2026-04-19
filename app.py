@@ -1,8 +1,6 @@
 import tempfile
 import cv2
 import streamlit as st
-import imageio
-import os
 
 from detector import Detector
 from tracker import SimpleTracker
@@ -37,15 +35,28 @@ if uploaded_file is not None:
     tfile.write(uploaded_file.read())
     video_path = tfile.name
 
+    cap = cv2.VideoCapture(video_path)
+    fps = int(cap.get(cv2.CAP_PROP_FPS))
+    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    
     stframe = st.empty()
     info_box = st.empty()
     progress_bar = st.progress(0)
 
-    reader = imageio.get_reader(video_path, 'ffmpeg')
-    total_frames = reader.count_frames()
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     frame_index = 0
+    skip_frames = max(1, fps // 5)
 
-    for frame in reader:
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if not ret:
+            break
+        
+        frame_index += 1
+        if frame_index % skip_frames != 0:
+            continue
+
         roi_box = get_roi_box(
             frame.shape,
             ROI_TOP_RATIO,
@@ -62,7 +73,7 @@ if uploaded_file is not None:
         draw_boxes(frame, objects)
         frame = draw_dashboard(frame, metrics)
 
-        stframe.image(frame, channels="BGR", use_column_width=True)
+        stframe.image(frame, channels="BGR", use_container_width=True)
 
         info_box.markdown(
             f"""
@@ -75,11 +86,10 @@ if uploaded_file is not None:
 """
         )
 
-        frame_index += 1
         if total_frames > 0:
             progress_bar.progress(min(frame_index / total_frames, 1.0))
 
-    reader.close()
+    cap.release()
 
     summary = analyzer.final_summary()
 
