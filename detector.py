@@ -1,5 +1,5 @@
 from ultralytics import YOLO
-from config.settings import VEHICLE_CLASSES, CONF_THRESHOLD
+from settings import VEHICLE_CLASSES, CONF_THRESHOLD
 
 
 class Detector:
