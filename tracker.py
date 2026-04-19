@@ -1,5 +1,5 @@
 import math
-from config.settings import TRACK_MAX_DISTANCE, TRACK_MAX_LOST
+from settings import TRACK_MAX_DISTANCE, TRACK_MAX_LOST
 
 
 class SimpleTracker:
