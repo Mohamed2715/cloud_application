@@ -65,7 +65,7 @@ if uploaded_file is not None:
         draw_boxes(frame, objects)
         frame = draw_dashboard(frame, metrics)
 
-        stframe.image(frame, channels="BGR", use_container_width=True)
+        stframe.image(frame, channels="BGR", use_column_width=True)
 
         info_box.markdown(
             f"""
