@@ -97,3 +97,31 @@ if uploaded_file is not None:
     st.markdown("## Final Summary")
     st.markdown(f"- **Final Status:** {summary['final_status']}")
     st.markdown(f"- **Status Counts:** {summary['status_counts']}")
+
+st.markdown("---")
+st.subheader("💬 Traffic Assistant Chatbot")
+
+with st.chat_message("assistant"):
+    st.write("Hello! I'm your traffic analysis assistant. Ask me anything about the video analysis!")
+
+user_question = st.chat_input("Ask me about traffic analysis...")
+
+if user_question:
+    st.chat_message("user").write(user_question)
+    
+    response = "I'm here to help with traffic analysis. You can ask me about congestion, accidents, or vehicle counts!"
+    
+    if "congestion" in user_question.lower():
+        response = "🚦 Congestion happens when slow vehicles exceed 5 out of at least 8 vehicles."
+    elif "accident" in user_question.lower():
+        response = "⚠️ Possible accident is detected when slow vehicles exceed 8 and average motion is below 2.0."
+    elif "wrong way" in user_question.lower():
+        response = "🔄 Wrong way driving is detected based on direction deviation from the majority."
+    elif "vehicle" in user_question.lower() or "car" in user_question.lower():
+        response = "🚗 Vehicle count is displayed live in the metrics panel."
+    elif "speed" in user_question.lower():
+        response = "🏎️ Slow speed threshold is set to 3.0 motion units."
+    elif "help" in user_question.lower():
+        response = "I can answer questions about congestion, accidents, wrong way driving, vehicles, and speed."
+    
+    st.chat_message("assistant").write(response)
